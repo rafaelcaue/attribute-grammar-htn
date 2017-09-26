@@ -1,0 +1,55 @@
+
+
+----------------OPERATORS-------------------------------------------------------
+!Navigate_uav(?v,?y,?z) -> navigate_uav_{?v,?y,?z}(?i)
+[ before((uav ?v), (area ?y), (area ?z), (at ?v ?y)),
+  after_minus((at ?v ?y)),
+  after_plus((at ?v ?z))]
+
+!Take_picture(?v, ?a, ?d) -> take_picture_{?v,?a,?d} [
+before((area ?a), (disaster ?d), (visible_from ?d ?a), (at ?v ?a)),
+after_minus((have_picture ?v ?d))
+]
+
+!Communicate_data(?v,?c,?d,?a1,?a2) -> communicate_data_{?v,?c,?d,?a1,?a2} [
+before((disaster ?d) (cdm ?c) (at ?v ?a1) (cdm_at ?c ?a2) (area ?a1) (area ?a2) (have_picture ?v ?d) (in_range ?a1 ?a2)),
+after_minus(have_picture ?v ?d)),
+after_plus((communicated_data ?d))
+]
+
+
+!Visit(area) -> lambda [
+after_plus((visited ?area))
+]
+
+
+!Unvisit(area) -> lambda [
+after_minus((visited ?area))
+]
+
+----------------METHODS---------------------------------------------------------
+
+
+Get_picture(?disaster) -> Navigate(?robot, ?area).Take_picture(?robot, ?area, ?disaster).
+Send_data(?robot, ?disaster) [
+before((robot ?robot) (disaster ?disaster) (visible_from ?disaster ?area)),
+]
+
+
+Send_data(?robot, ?disaster) -> Communicate_data(?robot ?c ?disaster ?a1 ?a2) [
+before((robot ?robot) (disaster ?disaster) (have_picture ?v ?d) (at ?v ?a1) (cdm_at ?c ?a2) (area ?a1) (area ?a2) (in_range ?a1 ?a2))
+]
+
+Send_data(?robot, ?disaster) -> Navigate(?robot, ?a1).Communicate_data(?robot ?c ?disaster ?a1 ?a2) [
+before((robot ?robot) (disaster ?disaster) (have_picture ?v ?d) (cdm_at ?c ?a2) (area ?a2) (in_range ?a1 ?a2))
+]
+
+Navigate(?robot, ?to) -> Navigate_uav(?robot, ?from, ?to) [
+before((uav ?robot) (at ?robot ?from))
+]
+
+Navigate_uav(?uav, ?from, ?to) -> lambda [
+before((at ?uav ?to))
+]
+
+Navigate_uav(?uav, ?from, ?to) -> !Navigate_uav(uav, from, to)

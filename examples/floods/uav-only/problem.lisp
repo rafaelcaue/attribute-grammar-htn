@@ -1,0 +1,72 @@
+(defproblem uav1 floods-uav
+   (
+    ;;;
+    ;;;  facts
+    ;;;
+    (uav uav1)
+    (area area1)
+    (area area2)
+    (area area3)
+    (area area4)
+    (area area5)
+    (area area6)
+    (area area7)
+    (area area8)
+    (area area9)
+    (area area10)
+    (area area11)
+    (area area12)
+    (area area13)
+    (area area14)
+    (area area15)
+    (disaster disaster1)
+    (disaster disaster2)
+    (disaster disaster3)
+    (disaster disaster4)
+    (disaster disaster5)
+    (cdm cdm1)
+    (cdm cdm2)
+    
+    (not have_picture uav1 disaster1)
+    (not have_picture uav1 disaster2)
+    (not have_picture uav1 disaster3)
+    (not have_picture uav1 disaster4)
+    (not have_picture uav1 disaster5)
+    
+    ;;;
+    ;;;  initial states
+    ;;;
+	(cdm_at cdm1 area1)
+	(cdm_at cdm2 area13)
+	(at uav1 area1)
+	(not at uav1 area2)
+	(not at uav1 area3)
+	(not at uav1 area4)
+	(not at uav1 area5)
+	(not at uav1 area6)
+	(not at uav1 area7)
+	(not at uav1 area8)
+	(not at uav1 area9)
+	(not at uav1 area10)
+	(not at uav1 area11)
+	(not at uav1 area12)
+	(not at uav1 area13)
+	(not at uav1 area14)
+	(not at uav1 area15)
+
+	(visible_from disaster1 area8)
+	(visible_from disaster2 area12)
+	(visible_from disaster3 area10)
+	(visible_from disaster4 area7)
+	(visible_from disaster5 area3)
+
+	(in_range area2 area1)
+	(in_range area3 area1)
+	(in_range area1 area1)
+	(in_range area9 area13)
+	(in_range area10 area13)
+	(in_range area13 area13)
+)
+
+((get_picture disaster2))
+)
