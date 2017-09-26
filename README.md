@@ -11,4 +11,5 @@
 
 ## Examples
 `ruby Hype.rb examples/toy/domain.lisp examples/toy/problem.lisp examples/toy/plan.lisp validate`
+
 `ruby Hype.rb examples/toy/domain.lisp examples/toy/problem.lisp parse`
