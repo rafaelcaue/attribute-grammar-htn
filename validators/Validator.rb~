@@ -307,7 +307,7 @@ module Validator
 		  else break
 		  end
 		}
-		if not subtasks.empty? #and subtasks.size == rule.subtasks.size
+		if not subtasks.empty? and subtasks.size == rule.subtasks.size
 		puts "Subtasks to be merged into the timeline:"
 		subtasks.sort_by! {|sub| sub[1]}
 		
