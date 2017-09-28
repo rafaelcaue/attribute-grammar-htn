@@ -48,7 +48,6 @@ module Validator
 
   def planisvalid(plan,tasklist)
 	plansize = plan.size()
-	puts plansize
     @subplans.each {|sub|
 	  if sub[1] == 1 and sub[2] == plansize
 		puts "This subplan has its first action with index equal to 1 and its last action with index equal to the size of the solution plan."
@@ -82,14 +81,13 @@ module Validator
   def mergeplans(subplans)
     lb = subplans.min_by {|subplan| subplan[1]}[1]
 	ub = subplans.max_by {|subplan| subplan[2]}[2]
-	auxtimeline = [] 
 	newtimeline = []
 	for i in lb..ub
-	  auxtimeline << [[], [], nil, [], []]
+	  newtimeline << [[], [], nil, [], []]
 	end
 	subplans.each {|sub|
 	  sub[3].each_with_index {|slot,i|
-	    newtimeline << mergeslots(slot,auxtimeline[i])
+	    newtimeline[sub[1]-1+i] = mergeslots(slot,newtimeline[sub[1]-1+i])
 	  }
 	}
     return newtimeline
@@ -112,6 +110,7 @@ module Validator
       end 
       return [pre_pos,pre_neg,a,post_pos,post_neg]
     end
+    return s1
   end
   
   #-----------------------------------------------
@@ -321,7 +320,11 @@ module Validator
 		    puts "Slot #{i}:"
 		    puts "Positive precondition: #{slot[0]}"
 			puts "Negative precondition: #{slot[1]}"
-			puts "Action: #{slot[2].name+'('+slot[2].args.join(',')+')'}"
+			if not slot[2].nil?
+			  puts "Action: #{slot[2].name+'('+slot[2].args.join(',')+')'}"
+			else
+			  puts "Action: nil"
+			end
 			puts "Positive effect: #{slot[3]}"
 			puts "Negative effect: #{slot[4]}"
 		  }
