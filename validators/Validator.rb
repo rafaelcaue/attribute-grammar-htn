@@ -118,6 +118,7 @@ module Validator
   #-----------------------------------------------
 
   def applypre(timeline,pre_pos,pre_neg,subtasks)
+  puts subtasks.to_s
     id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
     timeline[id-1][0] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][0]) | Predicate.to_arr(pre_pos))
     timeline[id-1][1] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][1]) | Predicate.to_arr(pre_neg))
@@ -278,11 +279,11 @@ module Validator
 		subtasksaux = []
 		subargs = []
 		rule.subtasks.each{|sub|
+		  subtasksaux = []
 		  subpaux = [@subplans.find_all{|p| p.first.name == sub.name and p.first.args.size() == sub.args.size()}]
 		  subpaux.flatten!(1)
 		  if not subpaux.empty?
 		     subpaux.each{|subp|
-			   subtasksaux = []
 #		       subpaux = subpaux.first	
 		       newsub = Predicate.set_single_pred_args(sub,subp.first.args, sub.args)
 		       subargs << [sub.args,subp.first.args]
@@ -310,12 +311,20 @@ module Validator
 		    subtasks = subtasks.product(subtasksaux)
 		  end
 		  
-		 # puts subtasks.to_s
+		  puts subtasks.to_s
 
 		  else break
 		  end
 		}
+		if rule.subtasks.size == 1
+			subtasks = subtasks.product()
+			
+		end
+		puts subtasks.to_s
+		puts subtasks.size()
 		subtasks.each{|subs|
+		  puts subs.size
+		  puts subs.to_s
 		  if not subs.empty? and subs.size == rule.subtasks.size
 		  puts "Subtasks to be merged into the timeline:"
    		  subs.sort_by! {|sub| sub[1]}
@@ -346,7 +355,8 @@ module Validator
 		
 #		applybetween(timeline,rule.between) between is not supported yet
 #		applypost(timeline,rule.post_cond) # methods do not have post conditions in shop2 syntax
-
+		puts newposprecs.to_s
+		puts newnegprecs.to_s
 		timeline = applypre(timeline,newposprecs,newnegprecs,subs)
 		puts "\n\n"
 		puts "New time line (after applying before contraints): #{timeline}"
