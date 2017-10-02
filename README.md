@@ -7,7 +7,7 @@
 
 ## Usage
 - To validate type `ruby Hype.rb domain problem plan validate` where domain, problem, and plan are the locations of the domain, problem, and solution plan files.
-- To parse HTN models in SHOP2-like syntax type `ruby Hype.rb domain problem validate` where domain, and problem, are the locations of the domain, and problem files.
+- To parse HTN models from SHOP2-like syntax to an intermediate represenation of attribute grammars type `ruby Hype.rb domain problem parse` where domain, and problem, are the locations of the domain, and problem files.
 
 ## Examples
 `ruby Hype.rb examples/toy/domain.lisp examples/toy/problem.lisp examples/toy/plan.lisp validate`

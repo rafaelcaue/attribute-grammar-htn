@@ -118,14 +118,9 @@ module Validator
   #-----------------------------------------------
 
   def applypre(timeline,pre_pos,pre_neg,subtasks)
-    pre_pos.each {|pre|
-      id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
-      timeline[id-1][0] = Array(timeline[id-1][0]) | Array(pre)
-    }
-    pre_neg.each {|pre|
-      id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
-      timeline[id-1][0] = Array(timeline[id-1][0]) | Array(pre)
-    }
+    id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
+    timeline[id-1][0] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][0]) | Predicate.to_arr(pre_pos))
+    timeline[id-1][1] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][1]) | Predicate.to_arr(pre_neg))
     return timeline
   end
   
@@ -278,45 +273,59 @@ module Validator
 	    puts "\n\n"
 	    puts "Plan is not valid yet, expanding more."
 	    puts "\n"
-	    subtasks = []
 		puts "Rule: #{rule.name}"
+		subtasks = []
+		subtasksaux = []
 		subargs = []
 		rule.subtasks.each{|sub|
 		  subpaux = [@subplans.find_all{|p| p.first.name == sub.name and p.first.args.size() == sub.args.size()}]
 		  subpaux.flatten!(1)
 		  if not subpaux.empty?
 		     subpaux.each{|subp|
+			   subtasksaux = []
 #		       subpaux = subpaux.first	
 		       newsub = Predicate.set_single_pred_args(sub,subp.first.args, sub.args)
 		       subargs << [sub.args,subp.first.args]
 			   puts "Subtask #{newsub.name} is an element of subplans."
-
-			   newposprecs = rule.positive_precond.find{|pre| pre.args.to_s == sub.args.to_s}
-			   if newposprecs != nil
-			     newposprecs = Predicate.set_args([newposprecs],newsub.args,sub.args)
-			   else newposprecs = []
-			   end
-			   newnegprecs = rule.negative_precond.find{|pre| pre.args.to_s == sub.args.to_s}
-			   if newnegprecs != nil
-			     newnegprecs = Predicate.set_args([newnegprecs],newsub.args,sub.args)
-			   else newnegprecs = []
-			   end
 			
-		   	  subtasks << subtask = [newsub,subp[1],subp[2],subp[3]]
+			
+		  newposprecsaux = rule.positive_precond.find{|pre| pre.args.to_s == sub.args.to_s}
+		  if newposprecsaux != nil
+		    newposprecs << Predicate.set_args([newposprecsaux],newsub.args,sub.args)
+		    newposprecs.flatten!
+		  end
+		  newnegprecsaux = rule.negative_precond.find{|pre| pre.args.to_s == sub.args.to_s}
+		  if newnegprecsaux != nil
+		    newnegprecs << Predicate.set_args([newnegprecsaux],newsub.args,sub.args)
+		    newnegprecs.flatten!
+		  end
+			
+		   	  subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
+
 		     }
+	
+		  if subtasks.empty?
+		    subtasks = subtasksaux
+		  else
+		    subtasks = subtasks.product(subtasksaux)
+		  end
+		  
+		 # puts subtasks.to_s
+
 		  else break
 		  end
 		}
-		if not subtasks.empty? #and subtasks.size == rule.subtasks.size
-		puts "Subtasks to be merged into the timeline:"
-		subtasks.sort_by! {|sub| sub[1]}
-		
 		subtasks.each{|subs|
-		  puts "Name: #{subs[0].name+'('+subs[0].args.join(',')+')'}"
-		  puts "Begin index: #{subs[1]}"
-		  puts "End index: #{subs[2]}"
+		  if not subs.empty? and subs.size == rule.subtasks.size
+		  puts "Subtasks to be merged into the timeline:"
+   		  subs.sort_by! {|sub| sub[1]}
+		
+		  subs.each{|sub|  
+		  puts "Name: #{sub[0].name+'('+sub[0].args.join(',')+')'}"
+		  puts "Begin index: #{sub[1]}"
+		  puts "End index: #{sub[2]}"
 		  puts "Timeline:"
-		  subs[3].each_with_index{|slot,i|
+		  sub[3].each_with_index{|slot,i|
 		    puts "Slot #{i}:"
 		    puts "Positive precondition: #{slot[0]}"
 			puts "Negative precondition: #{slot[1]}"
@@ -328,17 +337,17 @@ module Validator
 			puts "Positive effect: #{slot[3]}"
 			puts "Negative effect: #{slot[4]}"
 		  }
-
-		}
+		
+		  }
 				
-		timeline = mergeplans(subtasks)
+		timeline = mergeplans(subs)
 		puts "\n\n"
 		puts "New time line (after merges): #{timeline}"
 		
 #		applybetween(timeline,rule.between) between is not supported yet
 #		applypost(timeline,rule.post_cond) # methods do not have post conditions in shop2 syntax
 
-		timeline = applypre(timeline,newposprecs,newnegprecs,subtasks)
+		timeline = applypre(timeline,newposprecs,newnegprecs,subs)
 		puts "\n\n"
 		puts "New time line (after applying before contraints): #{timeline}"
 		
@@ -371,8 +380,8 @@ module Validator
 		  end
 		}
 		if inters_pre.empty? and inters_post.empty?
-		  b = subtasks.min_by {|subtask| subtask[1]}[1]
-		  e = subtasks.max_by {|subtask| subtask[2]}[2]
+		  b = subs.min_by {|subtask| subtask[1]}[1]
+		  e = subs.max_by {|subtask| subtask[2]}[2]
 		  puts "Minimum begin index: #{b}"
 		  puts "Maximum end index: #{e}"
 		
@@ -410,7 +419,7 @@ module Validator
 		end
 		else puts "Not all subtasks of this rule are elements of subplans."
 		end
-		
+		}
 		puts "\n\n"
 	  }
 	
