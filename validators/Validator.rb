@@ -118,7 +118,7 @@ module Validator
   #-----------------------------------------------
 
   def applypre(timeline,pre_pos,pre_neg,subtasks)
-  puts subtasks.to_s
+#    puts subtasks.to_s
     id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
     timeline[id-1][0] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][0]) | Predicate.to_arr(pre_pos))
     timeline[id-1][1] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][1]) | Predicate.to_arr(pre_neg))
@@ -353,7 +353,7 @@ module Validator
 	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
 	  	    end
 	  	  }
-	  	  puts newargs.to_s
+	  	  newposprecs << Predicate.set_single_pred_args(rpos,newargs,rpos.args)
 	  	  indexes = []
 	  	  subindex = []
 	  	  newargs = []
@@ -366,19 +366,11 @@ module Validator
 	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
 	  	    end
 	  	  }
-	  	  puts newargs.to_s
+	  	  newnegprecs << Predicate.set_single_pred_args(rneg,newargs,rneg.args)
 	  	  indexes = []
 	  	  subindex = []
 	  	  newargs = []
 	  	}
-	  	rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
-	  	indexes.each_with_index{|ind,i|
-	  	 if ind != nil
-	  	   newargs << subargs.fetch(ind)[1].fetch(subindex[i])
-	  	 end
-	  	}
-		#puts rule.args.to_s
-		#puts newargs.to_s
 
 		puts newposprecs.to_s
 		puts newnegprecs.to_s
@@ -429,6 +421,15 @@ module Validator
 	  	  #    newargs << slot[2].args
 	  	  #  end
 	  	  #}
+	  	  
+	  	  rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
+	  	  indexes.each_with_index{|ind,i|
+	  	   if ind != nil
+  	  	     newargs << subargs.fetch(ind)[1].fetch(subindex[i])
+	  	   end
+	  	  }
+		  #puts rule.args.to_s
+		  #puts newargs.to_s
 
 	  	  rulenew = Task.new(rule.name,newargs)
 	  	  subplan = [rulenew,b,e,timeline]
