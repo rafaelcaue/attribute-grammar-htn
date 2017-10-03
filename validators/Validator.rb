@@ -268,8 +268,6 @@ module Validator
 	  puts "Subplans is:"
 	  print @subplans
 	  subsize = @subplans.size
-	  newposprecs = []
-	  newnegprecs = []
 	  methods.each{|rule|
 	    puts "\n\n"
 	    puts "Plan is not valid yet, expanding more."
@@ -283,26 +281,12 @@ module Validator
 		  subpaux = [@subplans.find_all{|p| p.first.name == sub.name and p.first.args.size() == sub.args.size()}]
 		  subpaux.flatten!(1)
 		  if not subpaux.empty?
-		     subpaux.each{|subp|
-#		       subpaux = subpaux.first	
+		     subpaux.each{|subp|	
 		       newsub = Predicate.set_single_pred_args(sub,subp.first.args, sub.args)
 		       subargs << [sub.args,subp.first.args]
 			   puts "Subtask #{newsub.name} is an element of subplans."
 			
-			
-		  newposprecsaux = rule.positive_precond.find{|pre| pre.args.to_s == sub.args.to_s}
-		  if newposprecsaux != nil
-		    newposprecs << Predicate.set_args([newposprecsaux],newsub.args,sub.args)
-		    newposprecs.flatten!
-		  end
-		  newnegprecsaux = rule.negative_precond.find{|pre| pre.args.to_s == sub.args.to_s}
-		  if newnegprecsaux != nil
-		    newnegprecs << Predicate.set_args([newnegprecsaux],newsub.args,sub.args)
-		    newnegprecs.flatten!
-		  end
-			
-		   	  subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
-
+		   	   subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
 		     }
 	
 		  if subtasks.empty?
@@ -355,6 +339,47 @@ module Validator
 		
 #		applybetween(timeline,rule.between) between is not supported yet
 #		applypost(timeline,rule.post_cond) # methods do not have post conditions in shop2 syntax
+		newposprecs = []
+	    newnegprecs = []
+	  	newargs = []
+	  	indexes = []
+	  	subindex = []
+	  	#puts subargs.to_s
+	  	rule.positive_precond.each{|rpos|
+	  	  rpos.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
+	  	  puts rpos.args.to_s
+	  	  indexes.each_with_index{|ind,i|
+	  	    if ind != nil
+	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
+	  	    end
+	  	  }
+	  	  puts newargs.to_s
+	  	  indexes = []
+	  	  subindex = []
+	  	  newargs = []
+	  	}
+	  	rule.negative_precond.each{|rneg|
+	  	  rneg.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
+	  	  puts rneg.args.to_s
+	  	  indexes.each_with_index{|ind,i|
+	  	    if ind != nil
+	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
+	  	    end
+	  	  }
+	  	  puts newargs.to_s
+	  	  indexes = []
+	  	  subindex = []
+	  	  newargs = []
+	  	}
+	  	rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
+	  	indexes.each_with_index{|ind,i|
+	  	 if ind != nil
+	  	   newargs << subargs.fetch(ind)[1].fetch(subindex[i])
+	  	 end
+	  	}
+		#puts rule.args.to_s
+		#puts newargs.to_s
+
 		puts newposprecs.to_s
 		puts newnegprecs.to_s
 		timeline = applypre(timeline,newposprecs,newnegprecs,subs)
@@ -397,21 +422,14 @@ module Validator
 		
 	  	  puts "\n\n"
 	  	  
-	  	  newargs = []
-	  	  indexes = []
-	  	  subindex = []
-	  	  rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
-	  	  indexes.each_with_index{|ind,i|
-	  	   if ind != nil
-	  	     newargs << subargs.fetch(ind)[1].fetch(subindex[i])
-	  	   end
-	  	  }
+
 	  	  #newargs = []
 	  	  #timeline.each{|slot|
 	  	  #  if slot[2] !=nil
 	  	  #    newargs << slot[2].args
 	  	  #  end
 	  	  #}
+
 	  	  rulenew = Task.new(rule.name,newargs)
 	  	  subplan = [rulenew,b,e,timeline]
 	  	  duplicate = @subplans.find{|sub| sub[0].name == subplan[0].name and sub[0].args == subplan[0].args and sub[1] == subplan[1] and sub[2] == subplan[2]}
