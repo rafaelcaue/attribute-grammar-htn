@@ -119,9 +119,9 @@ module Validator
 
   def applypre(timeline,pre_pos,pre_neg,subtasks)
 #    puts subtasks.to_s
-    id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
-    timeline[id-1][0] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][0]) | Predicate.to_arr(pre_pos))
-    timeline[id-1][1] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline[id-1][1]) | Predicate.to_arr(pre_neg))
+#    id = @subplans.map{|p| subtasks.find{|sub| sub[0].name == p.first.name} and p[1]}.min
+    timeline.first[0] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline.first[0]) | Predicate.to_arr(pre_pos))
+    timeline.first[1] = Predicate2.all_predicates_to_objects(Predicate.to_arr(timeline.first[1]) | Predicate.to_arr(pre_neg))
     return timeline
   end
   
@@ -302,7 +302,6 @@ module Validator
 		}
 		if rule.subtasks.size == 1
 			subtasks = subtasks.product()
-			
 		end
 		puts subtasks.to_s
 		puts subtasks.size()
@@ -347,7 +346,6 @@ module Validator
 	  	#puts subargs.to_s
 	  	rule.positive_precond.each{|rpos|
 	  	  rpos.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
-	  	  puts rpos.args.to_s
 	  	  indexes.each_with_index{|ind,i|
 	  	    if ind != nil
 	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
@@ -360,7 +358,6 @@ module Validator
 	  	}
 	  	rule.negative_precond.each{|rneg|
 	  	  rneg.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
-	  	  puts rneg.args.to_s
 	  	  indexes.each_with_index{|ind,i|
 	  	    if ind != nil
 	  	      newargs << subargs.fetch(ind)[1].fetch(subindex[i])
@@ -374,6 +371,7 @@ module Validator
 
 		puts newposprecs.to_s
 		puts newnegprecs.to_s
+		puts subs.to_s
 		timeline = applypre(timeline,newposprecs,newnegprecs,subs)
 		puts "\n\n"
 		puts "New time line (after applying before contraints): #{timeline}"
