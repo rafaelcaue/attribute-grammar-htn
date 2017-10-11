@@ -82,13 +82,19 @@ module Validator
     lb = subplans.min_by {|subplan| subplan[1]}[1]
 	ub = subplans.max_by {|subplan| subplan[2]}[2]
 	newtimeline = []
+	auxnewtimeline = []
 	for i in lb..ub
-	  newtimeline << [[], [], nil, [], []]
+	  auxnewtimeline << [i, [], [], nil, [], []]
 	end
 	subplans.each {|sub|
 	  sub[3].each_with_index {|slot,i|
-	    newtimeline[sub[1]-1+i] = mergeslots(slot,newtimeline[sub[1]-1+i])
+	    newslot = auxnewtimeline.find{|aux| aux.first == sub[1]+i}.drop(1)
+	    ind = auxnewtimeline.find_index{|aux| aux.first == sub[1]+i}
+	    auxnewtimeline[ind] = mergeslots(sub[1]+i,slot,newslot)
 	  }
+	}
+	auxnewtimeline.each {|aux|
+	  newtimeline << aux.drop(1)
 	}
     return newtimeline
   end
@@ -97,7 +103,7 @@ module Validator
   # merge slots
   #-----------------------------------------------
 
-  def mergeslots(s1,s2)
+  def mergeslots(i,s1,s2)
     if s1[2].nil? or s2[2].nil?
       pre_pos = Array(s1[0]) | Array(s2[0])
       pre_neg = Array(s1[1]) | Array(s2[1])
@@ -108,9 +114,8 @@ module Validator
       else 
         a = s1[2]
       end 
-      return [pre_pos,pre_neg,a,post_pos,post_neg]
+      return [i,pre_pos,pre_neg,a,post_pos,post_neg]
     end
-    return s1
   end
   
   #-----------------------------------------------
@@ -294,8 +299,6 @@ module Validator
 		  else
 		    subtasks = subtasks.product(subtasksaux)
 		  end
-		  
-		  puts subtasks.to_s
 
 		  else break
 		  end
@@ -331,7 +334,7 @@ module Validator
 		  }
 		
 		  }
-				
+		
 		timeline = mergeplans(subs)
 		puts "\n\n"
 		puts "New time line (after merges): #{timeline}"
