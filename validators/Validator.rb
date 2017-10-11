@@ -293,17 +293,26 @@ module Validator
 			
 		   	   subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
 		     }
-	
-		  if subtasks.empty?
-		    subtasks = subtasksaux
-		  else
-		    subtasks = subtasks.product(subtasksaux)
-		  end
+	      
+#		  if subtasks.empty?
+#		    subtasks = subtasksaux
+#		  else
+		    subtasks << subtasksaux
+#		    puts subtasks.to_s
+#		    puts subtasks.size
+#		    puts "\n\n"
+#		    puts subtasksaux.to_s
+#		    puts subtasksaux.size
+#		    subtasks = subtasks.product(subtasksaux)
+#		    puts "\n\n"
+#		    puts subtasks.flatten(1).to_s
+#		  end
 
 		  else break
 		  end
 		}
 		if rule.subtasks.size == 1
+		subtasks.flatten!(1)
 			subtasks = subtasks.product()
 		end
 		puts subtasks.to_s
