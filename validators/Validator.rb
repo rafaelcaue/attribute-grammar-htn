@@ -311,9 +311,13 @@ module Validator
 		  else break
 		  end
 		}
+		if not subtasks.empty?
 		if rule.subtasks.size == 1
-		subtasks.flatten!(1)
+		    subtasks.flatten!(1)
 			subtasks = subtasks.product()
+		else
+		    subtasks = subtasks[0].product(*subtasks[1..-1])
+		    subtasks.delete_if {|subs| subs.find{} }
 		end
 		puts subtasks.to_s
 		puts subtasks.size()
@@ -424,29 +428,19 @@ module Validator
 		
 	  	  puts "\n\n"
 	  	  
-
-	  	  #newargs = []
-	  	  #timeline.each{|slot|
-	  	  #  if slot[2] !=nil
-	  	  #    newargs << slot[2].args
-	  	  #  end
-	  	  #}
-	  	  
 	  	  rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
 	  	  indexes.each_with_index{|ind,i|
 	  	   if ind != nil
   	  	     newargs << subargs.fetch(ind)[1].fetch(subindex[i])
 	  	   end
 	  	  }
-		  #puts rule.args.to_s
-		  #puts newargs.to_s
 
 	  	  rulenew = Task.new(rule.name,newargs)
 	  	  subplan = [rulenew,b,e,timeline]
 	  	  duplicate = @subplans.find{|sub| sub[0].name == subplan[0].name and sub[0].args == subplan[0].args and sub[1] == subplan[1] and sub[2] == subplan[2]}
 	  	  
 	  	  if duplicate == nil
-		  @subplans << subplan
+		  @subplans.unshift(subplan)
 		  puts "The following subplan was added to the subplans set: #{subplan}"
 		  if planisvalid(plan,tasklist)
 		    puts "Plan is valid!"
@@ -456,9 +450,14 @@ module Validator
 		  end
 		  
 		end
+		
 		else puts "Not all subtasks of this rule are elements of subplans."
 		end
+		
 		}
+		
+	    else puts "Not all subtasks of this rule are elements of subplans."
+		end
 		puts "\n\n"
 	  }
 	
