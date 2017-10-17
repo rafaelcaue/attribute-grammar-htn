@@ -90,7 +90,11 @@ module Validator
 	  sub[3].each_with_index {|slot,i|
 	    newslot = auxnewtimeline.find{|aux| aux.first == sub[1]+i}.drop(1)
 	    ind = auxnewtimeline.find_index{|aux| aux.first == sub[1]+i}
-	    auxnewtimeline[ind] = mergeslots(sub[1]+i,slot,newslot)
+	    if slot[2].nil? or newslot[2].nil?
+	      auxnewtimeline[ind] = mergeslots(sub[1]+i,slot,newslot)
+	    else 
+	      return false
+	    end
 	  }
 	}
 	auxnewtimeline.each {|aux|
@@ -104,18 +108,16 @@ module Validator
   #-----------------------------------------------
 
   def mergeslots(i,s1,s2)
-    if s1[2].nil? or s2[2].nil?
-      pre_pos = Array(s1[0]) | Array(s2[0])
-      pre_neg = Array(s1[1]) | Array(s2[1])
-      post_pos = Array(s1[3]) | Array(s2[3])
-      post_neg = Array(s1[4]) | Array(s2[4])
-      if s1[2].nil? 
-        a = s2[2]
-      else 
-        a = s1[2]
-      end 
-      return [i,pre_pos,pre_neg,a,post_pos,post_neg]
-    end
+    pre_pos = Array(s1[0]) | Array(s2[0])
+    pre_neg = Array(s1[1]) | Array(s2[1])
+    post_pos = Array(s1[3]) | Array(s2[3])
+    post_neg = Array(s1[4]) | Array(s2[4])
+    if s1[2].nil? 
+      a = s2[2]
+    else 
+      a = s1[2]
+    end 
+    return [i,pre_pos,pre_neg,a,post_pos,post_neg]
   end
   
   #-----------------------------------------------
@@ -349,6 +351,8 @@ module Validator
 		  }
 		
 		timeline = mergeplans(subs)
+		if timeline != false
+		
 		puts "\n\n"
 		puts "New time line (after merges): #{timeline}"
 		
@@ -454,6 +458,7 @@ module Validator
 		else puts "Not all subtasks of this rule are elements of subplans."
 		end
 		
+		end
 		}
 		
 	    else puts "Not all subtasks of this rule are elements of subplans."
