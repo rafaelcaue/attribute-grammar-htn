@@ -30,6 +30,11 @@
 	( (at ?v ?from ) (road ?from ?to) )
 	( (!drive ?v ?from ?to) )
   )
+  
+   (:method (root)
+	 ( )
+	 ( (deliver ?p1 ?l1) (deliver ?p2 ?l2) )
+   )
 
 ))
 
