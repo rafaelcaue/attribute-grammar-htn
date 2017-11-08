@@ -33,7 +33,7 @@
   
    (:method (root)
 	 ( )
-	 ( (deliver ?p1 ?l1) (deliver ?p2 ?l2) (deliver ?p3 ?l3) )
+	 ( (deliver ?p1 ?l1) (deliver ?p2 ?l2) (deliver ?p3 ?l3) (deliver ?p4 ?l4) )
    )
 
 ))

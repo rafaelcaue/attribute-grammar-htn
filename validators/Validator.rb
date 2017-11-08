@@ -295,6 +295,7 @@ module Validator
 			
 		   	   subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
 		     }
+		     puts "Hiii"
 	      
 #		  if subtasks.empty?
 #		    subtasks = subtasksaux
@@ -313,6 +314,7 @@ module Validator
 		  else break
 		  end
 		}
+		puts "Hiii3"
 		if not subtasks.empty?
 		if rule.subtasks.size == 1
 		    subtasks.flatten!(1)
@@ -321,40 +323,41 @@ module Validator
 		    subtasks = subtasks[0].product(*subtasks[1..-1])
 		    subtasks.delete_if {|subs| subs.find{} }
 		end
-		puts subtasks.to_s
-		puts subtasks.size()
+		puts "Hiii5"
+#		puts subtasks.to_s
+#		puts subtasks.size()
 		subtasks.each{|subs|
-		  puts subs.size
-		  puts subs.to_s
+#		  puts subs.size
+#		  puts subs.to_s
 		  if not subs.empty? and subs.size == rule.subtasks.size
-		  puts "Subtasks to be merged into the timeline:"
+#		  puts "Subtasks to be merged into the timeline:"
    		  subs.sort_by! {|sub| sub[1]}
 		
-		  subs.each{|sub|  
-		  puts "Name: #{sub[0].name+'('+sub[0].args.join(',')+')'}"
-		  puts "Begin index: #{sub[1]}"
-		  puts "End index: #{sub[2]}"
-		  puts "Timeline:"
-		  sub[3].each_with_index{|slot,i|
-		    puts "Slot #{i}:"
-		    puts "Positive precondition: #{slot[0]}"
-			puts "Negative precondition: #{slot[1]}"
-			if not slot[2].nil?
-			  puts "Action: #{slot[2].name+'('+slot[2].args.join(',')+')'}"
-			else
-			  puts "Action: nil"
-			end
-			puts "Positive effect: #{slot[3]}"
-			puts "Negative effect: #{slot[4]}"
-		  }
+#		  subs.each{|sub|  
+#		  puts "Name: #{sub[0].name+'('+sub[0].args.join(',')+')'}"
+#		  puts "Begin index: #{sub[1]}"
+#		  puts "End index: #{sub[2]}"
+#		  puts "Timeline:"
+#		  sub[3].each_with_index{|slot,i|
+#		    puts "Slot #{i}:"
+#		    puts "Positive precondition: #{slot[0]}"
+#			puts "Negative precondition: #{slot[1]}"
+#			if not slot[2].nil?
+#			  puts "Action: #{slot[2].name+'('+slot[2].args.join(',')+')'}"
+#			else
+#			  puts "Action: nil"
+#			end
+#			puts "Positive effect: #{slot[3]}"
+#			puts "Negative effect: #{slot[4]}"
+#		  }
 		
-		  }
+#		  }
 		
 		timeline = mergeplans(subs)
 		if timeline != false
 		
-		puts "\n\n"
-		puts "New time line (after merges): #{timeline}"
+#		puts "\n\n"
+#		puts "New time line (after merges): #{timeline}"
 		
 #		applybetween(timeline,rule.between) between is not supported yet
 #		applypost(timeline,rule.post_cond) # methods do not have post conditions in shop2 syntax
@@ -389,26 +392,26 @@ module Validator
 	  	  newargs = []
 	  	}
 
-		puts newposprecs.to_s
-		puts newnegprecs.to_s
-		puts subs.to_s
+#		puts newposprecs.to_s
+#		puts newnegprecs.to_s
+#		puts subs.to_s
 		timeline = applypre(timeline,newposprecs,newnegprecs,subs)
-		puts "\n\n"
-		puts "New time line (after applying before contraints): #{timeline}"
+#		puts "\n\n"
+#		puts "New time line (after applying before contraints): #{timeline}"
 		
-		puts "\n\n"
+#		puts "\n\n"
 		
-		puts "Slots to be propagated:"
-		timeline.each{|slot|
-		  puts slot.to_s
-		}
+#		puts "Slots to be propagated:"
+#		timeline.each{|slot|
+#		  puts slot.to_s
+#		}
 		
-		puts "\n\n"
+#		puts "\n\n"
 		
 		timeline = propagate(timeline)
-		puts "Propagated timeline: #{timeline}"
+#		puts "Propagated timeline: #{timeline}"
 		
-		puts "\n\n"
+#		puts "\n\n"
 		
 		inters_pre = []
 		inters_post = []
@@ -427,10 +430,10 @@ module Validator
 		if inters_pre.empty? and inters_post.empty?
 		  b = subs.min_by {|subtask| subtask[1]}[1]
 		  e = subs.max_by {|subtask| subtask[2]}[2]
-		  puts "Minimum begin index: #{b}"
-		  puts "Maximum end index: #{e}"
+#		  puts "Minimum begin index: #{b}"
+#		  puts "Maximum end index: #{e}"
 		
-	  	  puts "\n\n"
+#	  	  puts "\n\n"
 	  	  
 	  	  rule.args.each{|rarg| indexes <<  subargs.index{|sarg| aux = sarg[0].index{|sargvar| sargvar == rarg} and aux != nil and subindex << aux}}
 	  	  indexes.each_with_index{|ind,i|
