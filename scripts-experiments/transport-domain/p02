@@ -1,0 +1,1 @@
+ruby Hype.rb examples/transport/domain2.lisp examples/transport/problem2.lisp examples/transport/plan2.lisp validate

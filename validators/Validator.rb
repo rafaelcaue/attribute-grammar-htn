@@ -248,6 +248,7 @@ module Validator
 #    states.each {|i| 
 #		puts "#{i.name}(#{i.args.join(' ')})\n"
 #	 }
+	n_rules = 0
 	puts "\n\n"
 	print "Plan to be validated:"
     plan.each {|p|
@@ -280,6 +281,7 @@ module Validator
 	    puts "Plan is not valid yet, expanding more."
 	    puts "\n"
 		puts "Rule: #{rule.name}"
+		n_rules = n_rules + 1
 		subtasks = []
 		subtasksaux = []
 		subargs = []
@@ -291,11 +293,11 @@ module Validator
 		     subpaux.each{|subp|	
 		       newsub = Predicate.set_single_pred_args(sub,subp.first.args, sub.args)
 		       subargs << [sub.args,subp.first.args]
-			   puts "Subtask #{newsub.name} is an element of subplans."
+#			   puts "Subtask #{newsub.name} is an element of subplans."
 			
 		   	   subtasksaux << subtask = [newsub,subp[1],subp[2],subp[3]]
 		     }
-		     puts "Hiii"
+#		     puts "Hiii"
 	      
 #		  if subtasks.empty?
 #		    subtasks = subtasksaux
@@ -314,16 +316,16 @@ module Validator
 		  else break
 		  end
 		}
-		puts "Hiii3"
+#		puts "Hiii3"
 		if not subtasks.empty?
 		if rule.subtasks.size == 1
 		    subtasks.flatten!(1)
 			subtasks = subtasks.product()
 		else
 		    subtasks = subtasks[0].product(*subtasks[1..-1])
-		    subtasks.delete_if {|subs| subs.find{} }
+#		    subtasks.delete_if {|subs| subs.find{} }
 		end
-		puts "Hiii5"
+#		puts "Hiii5"
 #		puts subtasks.to_s
 #		puts subtasks.size()
 		subtasks.each{|subs|
@@ -451,6 +453,8 @@ module Validator
 		  puts "The following subplan was added to the subplans set: #{subplan}"
 		  if planisvalid(plan,tasklist)
 		    puts "Plan is valid!"
+		    puts "Number of rules tried: #{n_rules}"
+		    puts "Subplans size: #{subplans.size}"
 		    puts "\n\n"
 		    return true
   	      end
@@ -458,19 +462,21 @@ module Validator
 		  
 		end
 		
-		else puts "Not all subtasks of this rule are elements of subplans."
+#		else puts "Not all subtasks of this rule are elements of subplans."
 		end
 		
 		end
 		}
 		
-	    else puts "Not all subtasks of this rule are elements of subplans."
+#	    else puts "Not all subtasks of this rule are elements of subplans."
 		end
 		puts "\n\n"
 	  }
 	
 	if @subplans.length == subsize
 	  puts "Plan is not valid!"
+	  puts "Number of rules tried: #{n_rules}"
+	  puts "Subplans size: #{subplans.size}"
 	  puts "\n\n"
 	  return false
   	end	
@@ -478,6 +484,8 @@ module Validator
 	end
 	
 	puts puts "The plan is valid!"
+	puts "Number of rules tried: #{n_rules}"
+	puts "Subplans size: #{subplans.size}"
 	puts "\n\n"
 	return true
 	
