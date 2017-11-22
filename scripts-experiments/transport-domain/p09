@@ -1,1 +1,1 @@
-ruby Hype.rb examples/transport/domain9.lisp examples/transport/problem9.lisp examples/transport/plan9.lisp validate
+time ruby Hype.rb examples/transport/domain9.lisp examples/transport/problem9.lisp examples/transport/plan9.lisp validate

@@ -1,0 +1,1 @@
+time ruby Hype.rb examples/satellite/domain9.lisp examples/satellite/problem9.lisp examples/satellite/plan9.lisp validate

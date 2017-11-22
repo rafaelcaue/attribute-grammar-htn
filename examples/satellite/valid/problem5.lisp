@@ -1,0 +1,32 @@
+(defproblem p05 satellite
+  (
+	(instrument instrument0)
+	(instrument instrument1)
+	(satellite satellite0)
+	(satellite satellite1)
+	(mode thermograph)
+	(direction GroundStation0)
+	(direction GroundStation1)
+	(direction Phenomenon6)
+	(direction Phenomenon7)
+	(direction Phenomenon4)
+	(direction Star5)
+	(on_board instrument0 satellite0)
+	(supports instrument0 thermograph)
+	(calibration_target instrument0 GroundStation0)
+	(power_avail satellite0)
+	(pointing satellite0 Phenomenon6)
+	(on_board instrument1 satellite1)
+	(supports instrument1 thermograph)
+	(calibration_target instrument1 GroundStation1)
+	(power_avail satellite1)
+	(pointing satellite1 Phenomenon7)
+  )
+
+(:unordered
+   (do_observation Phenomenon4 thermograph)
+   (reposition satellite0 GroundStation1)
+   (reposition satellite1 GroundStation0)
+)
+
+)
